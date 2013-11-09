@@ -1,0 +1,13 @@
+syntax: glob
+
+.DS_Store
+__pycache__
+logs
+config.yaml
+housepy
+data.db
+data/*
+run/*
+dev/*
+sample_data/*
+*.pem
