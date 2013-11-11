@@ -1,4 +1,4 @@
-questions:
+continue reporting back
+ping for updated model every hour or whatever
+if the model is too simple, ignore
 
-- should it stay entirely client side?
-- hash urls and report back?

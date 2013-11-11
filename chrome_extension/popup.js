@@ -16,17 +16,15 @@ background.updateButton = updateButton;
 function turnOn () {
     background.console.log("popup.turnOn");
     background.turnOn();
-    background.status = "Waiting for a partner...";
+    background.status = "Enabled";
     updateButton();     
-    // setTimeout(window.close, 2000);
 }
 
 function turnOff () {   
     background.console.log("popup.turnOff");    
     background.turnOff();
-    background.status = "Not entangled.";    
+    background.status = "Disabled";    
     updateButton();
-    // setTimeout(window.close, 2000);
 }        
 
 function cancel () {

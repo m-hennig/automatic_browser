@@ -2,7 +2,7 @@
     "manifest_version": 2,   
     "name": "Automatic Browser",
     "version": "1.0.0",
-    "description": "Automatic Browser browsers for you, just like you would.",
+    "description": "Automatic Browser browses for you, just like you would.",
     "icons": {
         "16": "icon_16.png",
         "48": "icon_48.png",
@@ -26,7 +26,8 @@
     "permissions": [
         "tabs",
         "cookies",
-        "http://tanglr.net/"
+        "storage",
+        "http://automaticbrowser.net/"
     ],
     "incognito": "split"
 }

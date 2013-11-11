@@ -1,61 +1,41 @@
-var SERVER = "tanglr.net";
-var status = "Not entangled.";
-var ws = null;
+var SERVER = "http://localhost:5050";
 var active = false;
 var current_url = "NONE";
 var user_id = null;
-var updateButton = null;
-var posts_enabled = true;
 
 chrome.browserAction.setIcon({path: "icon_38_bw.png"});
 chrome.browserAction.setBadgeBackgroundColor({color: [255, 0, 0, 0]});
 
+// take this out, it's for testing only:
+chrome.storage.sync.clear();
+
+function initUser () {
+    console.log("initUser");
+    chrome.storage.sync.get("user_id", function(data) {
+        if (data['user_id'] != null) {
+            user_id = data['user_id'];
+            console.log("user_id is " + user_id);
+        } else {
+            console.log("getting new user id");
+            $.post(SERVER, {'action': "new_user"}, function (data) {
+                console.log(data);
+                user_id = data;
+                chrome.storage.sync.set({"user_id": data});
+            });
+        }
+    });
+}
+
 function turnOn () {
     console.log("background.turnOn");  
-    ws = new WebSocket("ws://" + SERVER + "/websocket");
     active = true;
+    initUser();
     chrome.browserAction.setIcon({path: "icon_38_i.png"});
-    ws.onmessage = function (evt) {
-        message = evt.data;
-        console.log("--> received " + message);
-        if (message.substr(0, 4) == "http") {
-            var url = evt.data;    
-            chrome.tabs.getSelected(null, function (tab) {
-                if (tab != null) {
-                    console.log(current_url + " vs " + url);
-                    if (current_url != url) {
-                        chrome.tabs.update(tab.id, {url: url});
-                        current_url = url;
-                        posts_enabled = false;
-                        setTimeout(enablePosts, 3000);
-                    }
-                }
-            });  
-        } else if (message == "entangled") {                                   
-            console.log("entangled");
-            status = "Entangled!";
-            chrome.browserAction.setIcon({path: "icon_38.png"});
-            updateButton();
-        } else if (message == "unentangled") {                                   
-            console.log("unentangled");
-            status = "Waiting for partner...";
-            updateButton();            
-        } else if (message != "OK") {
-            user_id = message;
-            console.log("user_id is " + user_id);
-            checkUrl();
-        }
-    };
 }
 
 function turnOff () {
     console.log("background.turnOff");  
-    ws.close();
-    ws.onmessage = null;
-    ws = null;
     active = false;
-    current_url = "NONE";
-    user_id = null;    
     chrome.browserAction.setIcon({path: "icon_38_bw.png"});
 }
 
@@ -87,15 +67,12 @@ function checkUrl () {
 }
 
 function postUrl () {
-    if (!posts_enabled) return;
     console.log("background.postUrl " + current_url);
-    if (ws != null) {
-        ws.send('{"user_id": "' + user_id + '", "url": "' + current_url + '"}');
-    }
-}
-
-function enablePosts () {
-    posts_enabled = true;
+    $.post(SERVER, {action: 'report', user_id: user_id, url: current_url}, function(data) {
+        console.log("post result: " + data);
+    }).fail(function () {
+        console.log("post failed");
+    });
 }
 
 chrome.tabs.onSelectionChanged.addListener(function (tab_id, select_info) {
