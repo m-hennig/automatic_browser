@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json, model
+import numpy as np
 
 visits = model.fetch_visits('abaa56f20901eeca813cb72bb8544009')
 
@@ -27,8 +28,8 @@ class Site(object):
         self.durations.append(duration)
 
     @property
-    def average_duration(self):
-        return sum(self.durations) / len(self.durations)
+    def duration(self):
+        return np.mean(self.durations), np.std(self.durations)
 
     def __ref__(self):
         return "%s" % self.host
@@ -42,4 +43,4 @@ for v in range(len(visits) - 1):
         sites.append(site)
 
 for site in sites:
-    print(site.average_duration)
+    print(site.duration)
