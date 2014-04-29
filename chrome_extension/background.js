@@ -45,6 +45,8 @@ function checkUrl () {
     chrome.windows.getCurrent(function (window) {
         if (window == null || !window.focused) {
             console.log('(using other application)');
+            current_url = 'NONE';
+            postUrl();            
         } else {
             chrome.tabs.getSelected(null, function (tab) {
                 if (tab != null) {

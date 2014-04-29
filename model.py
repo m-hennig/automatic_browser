@@ -21,6 +21,8 @@ def insert_visit(user_id, url):
     t = util.timestamp()
     parts = urlparse(url)
     host, page = parts.netloc, parts.path
+    if not host:
+        host = page
     try:
         db.execute("INSERT INTO visits (user_id, t, host, page) VALUES (?, ?, ?, ?)", (user_id, t, host, page))
         entry_id = db.lastrowid
@@ -28,23 +30,15 @@ def insert_visit(user_id, url):
         log.error(log.exc(e))
         return
     connection.commit()
-    log.info("Inserted visit (%s) %s" % (t, user_id))    
+    log.info("Inserted visit (%s) %s %s" % (t, user_id, url))    
     return entry_id
 
-# def fetch_features(kinds, start_t, stop_t, skip=1):
-#     kindq = []
-#     for kind in kinds:
-#         kindq.append(" OR kind='%s'" % kind)
-#     query = "SELECT rowid, data FROM features WHERE rowid %% ? = 0 AND (1=0%s) AND t>=? AND t<? ORDER BY t" % ''.join(kindq)
-#     log.debug(query)
-#     db.execute(query, (skip, start_t, stop_t))
-#     features = []
-#     # this is slow
-#     for row in db.fetchall():
-#         feature = geojson.loads(row['data'])
-#         feature.id = row['rowid'] 
-#         features.append(feature)
-#     return features
+def fetch_visits(user_id):
+    db.execute("SELECT t, host, page FROM visits WHERE user_id=?", (user_id,))
+    visits = [dict(visit) for visit in db.fetchall()]
+    return visits
+
+
 
 # def get_protect(kind):
 #     db.execute("SELECT t FROM features WHERE kind=? ORDER BY t DESC LIMIT 1", (kind,))
