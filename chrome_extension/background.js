@@ -53,10 +53,11 @@ function checkUrl () {
                     if (tab.url != current_url) {
                         if (tab.url.substr(0, 4) != "http") {
                             console.log("(settings page)");                            
+                            current_url = 'NONE';
                         } else {
                             current_url = tab.url;
-                            postUrl();
                         }
+                        postUrl();                        
                     } else {
                         console.log("(same url)");
                     }

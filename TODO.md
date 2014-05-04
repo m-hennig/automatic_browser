@@ -21,3 +21,7 @@ when does it clear out the user?
 switches search terms
 auto-browses to frankenstein text
 
+
+
+physically absent multipliers
+-> max time?

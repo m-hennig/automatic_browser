@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sqlite3, json, time, sys, os
-from urllib.parse import urlparse
 from housepy import config, log, util
 
 connection = sqlite3.connect(os.path.abspath(os.path.join(os.path.dirname(__file__), "data.db")))
@@ -17,12 +16,8 @@ def init():
     connection.commit()
 init()
 
-def insert_visit(user_id, url):
+def insert_visit(user_id, host, page):
     t = util.timestamp()
-    parts = urlparse(url)
-    host, page = parts.netloc, parts.path
-    if not host:
-        host = page
     try:
         db.execute("INSERT INTO visits (user_id, t, host, page) VALUES (?, ?, ?, ?)", (user_id, t, host, page))
         entry_id = db.lastrowid
@@ -30,20 +25,10 @@ def insert_visit(user_id, url):
         log.error(log.exc(e))
         return
     connection.commit()
-    log.info("Inserted visit (%s) %s %s" % (t, user_id, url))    
+    log.info("Inserted visit (%s) %s %s %s" % (t, user_id, host, page))    
     return entry_id
 
 def fetch_visits(user_id):
-    db.execute("SELECT t, host, page FROM visits WHERE user_id=?", (user_id,))
+    db.execute("SELECT t, host, page FROM visits WHERE user_id=? ORDER BY t", (user_id,))
     visits = [dict(visit) for visit in db.fetchall()]
     return visits
-
-
-
-# def get_protect(kind):
-#     db.execute("SELECT t FROM features WHERE kind=? ORDER BY t DESC LIMIT 1", (kind,))
-#     result = db.fetchone()
-#     if result is None:
-#         return 0
-#     return result['t']
-
