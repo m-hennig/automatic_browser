@@ -2,11 +2,14 @@ var SERVER = "http://localhost:5050";
 var active = false;
 var current_url = "NONE";
 var user_id = null;
+var timeout = null;
+var auto = false;
 
 chrome.browserAction.setIcon({path: "icon_38_bw.png"});
 chrome.browserAction.setBadgeBackgroundColor({color: [255, 0, 0, 0]});
 
 // take this out, it's for testing only:
+console.log("hello world");
 chrome.storage.sync.clear();
 
 function initUser () {
@@ -40,7 +43,10 @@ function turnOff () {
 }
 
 function checkUrl () {
-    if (!active) return;
+    if (!active) {
+        if (auto == true) auto = false;    
+        return;
+    }
     console.log("background.checkUrl");  
     chrome.windows.getCurrent(function (window) {
         if (window == null || !window.focused) {
@@ -52,17 +58,17 @@ function checkUrl () {
                 if (tab != null) {
                     if (tab.url != current_url) {
                         if (tab.url.substr(0, 4) != "http") {
-                            console.log("(settings page)");                            
-                            current_url = 'NONE';
+                            console.log("(settings page, ignoring)");                            
                         } else {
                             current_url = tab.url;
-                        }
-                        postUrl();                        
+                            postUrl();
+                        }                        
                     } else {
-                        console.log("(same url)");
+                        console.log("(same url, ignoring)");
+                        if (auto == true) auto = false;    
                     }
                 } else {
-                    console.log("(no tabs)");
+                    console.log("(no tabs, ignoring)");
                 }
             });                        
         }
@@ -71,11 +77,29 @@ function checkUrl () {
 
 function postUrl () {
     console.log("background.postUrl " + current_url);
-    $.post(SERVER, {action: 'report', user_id: user_id, url: current_url}, function(data) {
+    $.post(SERVER, {action: 'report', user_id: user_id, url: current_url, auto: auto}, function(data) {
         console.log("post result: " + data);
+        if (data == "NOFUTURE") return;
+        var parts = data.split(" ");
+        var url = parts[0]
+        var delay = parts[1]
+        if (timeout != null) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(function () {
+            chrome.tabs.getSelected(null, function (tab) {
+                auto = true;
+                if (url != current_url) {
+                    chrome.tabs.update(tab.id, {url: url});
+                } else {
+                    if (auto == true) auto = false;                
+                }
+            });        
+        }, delay);
     }).fail(function () {
         console.log("post failed");
     });
+    if (auto == true) auto = false;
 }
 
 chrome.tabs.onSelectionChanged.addListener(function (tab_id, select_info) {

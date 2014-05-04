@@ -31,15 +31,17 @@ class Home(server.Handler):
         log.info("Home.report")
         user_id = self.get_argument("user_id")
         url = self.get_argument("url")
+        auto = self.get_argument("auto") == "true"
         parts = urlparse(url)
         host, page = parts.netloc, parts.path 
         if not host:
-            host = page               
-        model.insert_visit(user_id, host, page)
-        log.debug(host)
-        if host == "NONE":
-            return self.text("OK")
-        future = find_future(user_id)
+            host = page
+        host = host.replace("www.", "")
+        model.insert_visit(user_id, host, page, auto)
+        future = find_future(user_id, host)
+        if future is None:
+            log.info("--> no future")
+            return self.text("NOFUTURE")
         return self.text("%s %s" % future)
 
 

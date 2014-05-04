@@ -9,26 +9,26 @@ db = connection.cursor()
 
 def init():
     try:
-        db.execute("CREATE TABLE IF NOT EXISTS visits (user_id TEXT, t INTEGER, host TEXT, page TEXT)")
+        db.execute("CREATE TABLE IF NOT EXISTS visits (user_id TEXT, t INTEGER, host TEXT, page TEXT, auto BOOLEAN)")
     except Exception as e:
         log.error(log.exc(e))
         return
     connection.commit()
 init()
 
-def insert_visit(user_id, host, page):
+def insert_visit(user_id, host, page, auto):
     t = util.timestamp()
     try:
-        db.execute("INSERT INTO visits (user_id, t, host, page) VALUES (?, ?, ?, ?)", (user_id, t, host, page))
+        db.execute("INSERT INTO visits (user_id, t, host, page, auto) VALUES (?, ?, ?, ?, ?)", (user_id, t, host, page, auto))
         entry_id = db.lastrowid
     except Exception as e:
         log.error(log.exc(e))
         return
     connection.commit()
-    log.info("Inserted visit (%s) %s %s %s" % (t, user_id, host, page))    
+    log.info("Inserted visit (%s) %s %s %s %s" % (t, user_id, host, page, auto))    
     return entry_id
 
 def fetch_visits(user_id):
-    db.execute("SELECT t, host, page FROM visits WHERE user_id=? ORDER BY t", (user_id,))
+    db.execute("SELECT t, host, page, auto FROM visits WHERE user_id=? ORDER BY t", (user_id,))
     visits = [dict(visit) for visit in db.fetchall()]
     return visits

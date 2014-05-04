@@ -1,27 +1,5 @@
-continue reporting back
-ping for updated model every hour or whatever
-if the model is too simple, ignore
-
-/
-
-mean and distribution of time on each site
-probability matrix of next site
-for each site, sub probs for paths
-
-/
-
-browser history is commonly gathered
-
-/
-
 when does it clear out the user?
 
-//
+/
 
-switches search terms
-auto-browses to frankenstein text
-
-
-
-physically absent multipliers
--> max time?
+need a max timeframe
