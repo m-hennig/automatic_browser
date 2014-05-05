@@ -77,15 +77,13 @@ function checkUrl () {
 
 function postUrl () {
     console.log("background.postUrl " + current_url);
+    if (timeout != null) clearTimeout(timeout);    
     $.post(SERVER, {action: 'report', user_id: user_id, url: current_url, auto: auto}, function(data) {
         console.log("post result: " + data);
         if (data == "NOFUTURE") return;
         var parts = data.split(" ");
         var url = parts[0]
         var delay = parts[1]
-        if (timeout != null) {
-            clearTimeout(timeout);
-        }
         timeout = setTimeout(function () {
             chrome.tabs.getSelected(null, function (tab) {
                 auto = true;

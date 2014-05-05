@@ -33,7 +33,7 @@ class Home(server.Handler):
         url = self.get_argument("url")
         auto = self.get_argument("auto") == "true"
         parts = urlparse(url)
-        host, page = parts.netloc, parts.path 
+        host, page = parts.netloc, ("%s?%s" % (parts.path, parts.query)) if len(parts.query) else parts.path
         if not host:
             host = page
         host = host.replace("www.", "")
@@ -42,6 +42,8 @@ class Home(server.Handler):
         if future is None:
             log.info("--> no future")
             return self.text("NOFUTURE")
+        else:
+            log.info("--> future: %s" % (future,))
         return self.text("%s %s" % future)
 
 

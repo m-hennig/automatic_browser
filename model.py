@@ -10,6 +10,7 @@ db = connection.cursor()
 def init():
     try:
         db.execute("CREATE TABLE IF NOT EXISTS visits (user_id TEXT, t INTEGER, host TEXT, page TEXT, auto BOOLEAN)")
+        db.execute("CREATE INDEX IF NOT EXISTS t_key ON visits(t)")
     except Exception as e:
         log.error(log.exc(e))
         return
@@ -29,6 +30,7 @@ def insert_visit(user_id, host, page, auto):
     return entry_id
 
 def fetch_visits(user_id):
-    db.execute("SELECT t, host, page, auto FROM visits WHERE user_id=? ORDER BY t", (user_id,))
+    min_t = util.timestamp() - (7 * 24 * 60 * 60)
+    db.execute("SELECT t, host, page, auto FROM visits WHERE user_id=? AND t > ? ORDER BY t", (user_id, min_t))
     visits = [dict(visit) for visit in db.fetchall()]
     return visits

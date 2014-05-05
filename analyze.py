@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-import json, model, random, time
+import json, model, random, time, math
 import numpy as np
 from housepy import config, log
 
-MAX_DURATION = 15 * 60  # you're not really spending more than 15 minutes on a site ;)
+MIN_DURATION = .25 * 60  # let's not make it too flippy, max
+MAX_DURATION =  15 * 60  # you're not really spending more than 15 minutes on a site ;)
+MIN_MODEL_SIZE = 2
 
 class Site(object):
 
@@ -34,11 +36,12 @@ class Site(object):
             if not visits[n]['auto']:                                      # don't include auto-browsed sites in model
                 if next_site.host != "NONE": 
                     site.nexts.append(next_site)
-                site.durations.append(min(duration, MAX_DURATION))
+                site.durations.append(max(min(duration, MAX_DURATION), MIN_DURATION))
             site = next_site
             v = n
         if 'NONE' in Site.sites:
             del Site.sites['NONE']
+        return True
 
     @classmethod
     def get(cls, host):
@@ -53,33 +56,31 @@ class Site(object):
         self.pages = []
         
     def find_next(self):
-        log.debug("nexts %s" % list(set([next.host for next in self.nexts])))
         if not len(self.nexts):                 # new site, not enough info, choose most common site            
             site = max([site for site in Site.sites.values() if site != self], key=lambda site: len(site.durations))            
-            log.debug("UIQUE SITE %s" % [site.host for site in Site.sites.values() if site != self])
         else:
             site = random.choice(self.nexts)    # duplicate entries mean distribution is correct, abusing memory space a bit, how's that gonna scale...
-        log.debug("SITE PAGES: %s" % site.pages)
         page = random.choice(site.pages) if len(site.pages) else '/'
         std_dev = np.std(self.durations)
         seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
-        seconds = (random.random() * (MAX_DURATION/2)) + (MAX_DURATION/2) if seconds == 0.0 else seconds # if we dont have time info, make it up
-        # return "%s%s" % (site.host, page), int(seconds * 1000)
-        return "http://%s%s" % (site.host, page), 10000
+        if math.isnan(seconds):
+            seconds = 0.0
+        seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up
+        return "http://%s%s" % (site.host, page), int(seconds * 1000)
 
     def __str__(self):
         return "%s\n\t%s, %s\n\t%s\n" % (self.host, np.mean(self.durations), np.std(self.durations), self.pages)
 
 
 def find_future(user_id, host):
-    Site.build_model(user_id, host)
+    if Site.build_model(user_id, host) is None:
+        return None
     if __name__ == "__main__":
         for host, site in Site.sites.items():
             log.debug(site)
-    if len(Site.sites) < 2:                                    # the model is too small
+    if len(Site.sites) < max(2, MIN_MODEL_SIZE):                                # the model is too small
         return None
     future = Site.get(host).find_next()
-    log.info("--> future: %s" % (future,))
     return future        
 
 
