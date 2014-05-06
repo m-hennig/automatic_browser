@@ -4,9 +4,9 @@ import json, model, random, time, math
 import numpy as np
 from housepy import config, log
 
-MIN_DURATION = .25 * 60  # let's not make it too flippy, max
+MIN_DURATION = .25 * 60  # let's not make it too flippy, stan, 15s minimum
 MAX_DURATION =  15 * 60  # you're not really spending more than 15 minutes on a site ;)
-MIN_MODEL_SIZE = 2
+MIN_MODEL_SIZE = 5
 
 class Site(object):
 
@@ -67,7 +67,7 @@ class Site(object):
             seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up
         else:
             seconds = 0.0
-        return site.host, page, 10000 #int(seconds * 1000)
+        return site.host, page, int(seconds * 1000)
 
     def __str__(self):
         return "%s\n\t%s, %s\n\t%s\n" % (self.host, np.mean(self.durations) if len(self.durations) else 0.0, np.std(self.durations) if len(self.durations) else 0.0, self.pages)

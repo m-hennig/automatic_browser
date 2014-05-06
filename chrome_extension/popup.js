@@ -1,7 +1,6 @@
 var background = chrome.extension.getBackgroundPage();  
 
 function updateButton () {
-    background.console.log("popup.updateButton " + background.active);
     $('#status').html(background.status);                 
     if (background.active) {
         $('#on_btn').hide();
@@ -14,21 +13,18 @@ function updateButton () {
 background.updateButton = updateButton;
         
 function turnOn () {
-    background.console.log("popup.turnOn");
     background.turnOn();
     background.status = "Enabled";
     updateButton();     
 }
 
 function turnOff () {   
-    background.console.log("popup.turnOff");    
     background.turnOff();
     background.status = "Disabled";    
     updateButton();
 }        
 
 function cancel () {
-    background.console.log("popup.cancel");    
     window.close();
 }
 
