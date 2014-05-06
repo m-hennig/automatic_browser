@@ -5,7 +5,7 @@ var user_id = null;
 var timeout = null;
 var auto = false;
 
-chrome.browserAction.setIcon({path: "icon_38_bw.png"});
+chrome.browserAction.setIcon({path: "icon_19_disable.png"});
 chrome.browserAction.setBadgeBackgroundColor({color: [255, 0, 0, 0]});
 
 // take this out, it's for testing only:
@@ -33,13 +33,13 @@ function turnOn () {
     console.log("background.turnOn");  
     active = true;
     initUser();
-    chrome.browserAction.setIcon({path: "icon_38_i.png"});
+    chrome.browserAction.setIcon({path: "icon_19.png"});
 }
 
 function turnOff () {
     console.log("background.turnOff");  
     active = false;
-    chrome.browserAction.setIcon({path: "icon_38_bw.png"});
+    chrome.browserAction.setIcon({path: "icon_19_disable.png"});
 }
 
 function checkUrl () {

@@ -11,4 +11,3 @@ run/*
 dev/*
 sample_data/*
 *.pem
-security.md
