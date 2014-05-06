@@ -2,6 +2,7 @@ var SERVER = "http://localhost:5050";
 var active = false;
 var current_url = "NONE";
 var user_id = null;
+var key = null;
 var timeout = null;
 var auto = false;
 
@@ -15,15 +16,18 @@ chrome.storage.sync.clear();
 function initUser () {
     console.log("initUser");
     chrome.storage.sync.get("user_id", function(data) {
-        if (data['user_id'] != null) {
+        if (data['user_id'] != null && data['key'] != null) {
             user_id = data['user_id'];
+            key = data['key'];
             console.log("user_id is " + user_id);
         } else {
             console.log("getting new user id");
             $.post(SERVER, {'action': "new_user"}, function (data) {
                 console.log(data);
                 user_id = data;
+                key = Math.random().toString(36).slice(2); // random 16-digit string
                 chrome.storage.sync.set({"user_id": data});
+                chrome.storage.sync.set({"key": key});
             });
         }
     });
@@ -47,7 +51,7 @@ function checkUrl () {
         if (auto == true) auto = false;    
         return;
     }
-    console.log("background.checkUrl");  
+    // console.log("background.checkUrl");  
     chrome.windows.getCurrent(function (window) {
         if (window == null || !window.focused) {
             console.log('(using other application)');
@@ -64,7 +68,7 @@ function checkUrl () {
                             postUrl();
                         }                        
                     } else {
-                        console.log("(same url, ignoring)");
+                        // console.log("(same url, ignoring)");
                         if (auto == true) auto = false;    
                     }
                 } else {
@@ -78,15 +82,28 @@ function checkUrl () {
 function postUrl () {
     console.log("background.postUrl " + current_url);
     if (timeout != null) clearTimeout(timeout);    
-    $.post(SERVER, {action: 'report', user_id: user_id, url: current_url, auto: auto}, function(data) {
+    if (current_url != 'NONE') {
+        var parts = parseURL(current_url);
+        var host = parts.hostname.replace("www.", "");
+        var page = parts.pathname + parts.search + parts.hash;
+        host = encrypt(host);
+        page = encrypt(page);
+    } else {
+        var host = 'NONE';
+        var page = 'NONE';
+    }
+    $.post(SERVER, {action: 'report', user_id: user_id, host: host, page: page, auto: auto}, function(data) {
         console.log("post result: " + data);
         if (data == "NOFUTURE") return;
         var parts = data.split(" ");
-        var url = parts[0]
-        var delay = parts[1]
+        var host = parts[0];
+        var page = parts[1];
+        var delay = parts[2];
+        var url = "http://" + decrypt(host) + (page == '/' ? '/' : decrypt(page));
         timeout = setTimeout(function () {
             chrome.tabs.getSelected(null, function (tab) {
                 auto = true;
+                console
                 if (url != current_url) {
                     chrome.tabs.update(tab.id, {url: url});
                 } else {
@@ -98,6 +115,27 @@ function postUrl () {
         console.log("post failed");
     });
     if (auto == true) auto = false;
+}
+
+function parseURL (url) {
+    var parts = document.createElement('a');
+    parts.href = url;
+    return parts;
+}
+
+function encrypt (message) {
+    // return message
+    var encrypted = CryptoJS.AES.encrypt(message, key);    
+    var encoded = base32.encode("" + encrypted);
+    return encoded;
+}
+
+function decrypt (encoded) {    
+    // return encoded
+    var decoded = base32.decode(encoded);    
+    var decrypted = CryptoJS.AES.decrypt(decoded, key);    
+    var message = decrypted.toString(CryptoJS.enc.Utf8);
+    return message;
 }
 
 chrome.tabs.onSelectionChanged.addListener(function (tab_id, select_info) {
@@ -115,3 +153,4 @@ chrome.windows.onFocusChanged.addListener(function (window_id) {
 chrome.windows.onRemoved.addListener(function (window_id) {
     checkUrl();
 });        
+

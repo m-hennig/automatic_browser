@@ -1,1 +1,1 @@
-need a max timeframe, or weights toward recent
+looks like something on the python side isnt recognizing equal strings

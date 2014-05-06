@@ -26,7 +26,7 @@ def insert_visit(user_id, host, page, auto):
         log.error(log.exc(e))
         return
     connection.commit()
-    log.info("Inserted visit (%s) %s %s %s %s" % (t, user_id, host, page, auto))    
+    log.info("Inserted visit (%s) %s [%s] [%s] %s" % (t, user_id, host, page, auto))    
     return entry_id
 
 def fetch_visits(user_id):

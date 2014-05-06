@@ -66,7 +66,7 @@ class Site(object):
         if math.isnan(seconds):
             seconds = 0.0
         seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up
-        return "http://%s%s" % (site.host, page), int(seconds * 1000)
+        return site.host, page, 10000 #int(seconds * 1000)
 
     def __str__(self):
         return "%s\n\t%s, %s\n\t%s\n" % (self.host, np.mean(self.durations), np.std(self.durations), self.pages)

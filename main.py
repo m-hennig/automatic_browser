@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os, tornado, json, random, model, hashlib, time
-from urllib.parse import urlparse
 from housepy import config, log, strings, process, server, util
 from analyze import find_future
 
@@ -30,13 +29,9 @@ class Home(server.Handler):
     def report(self):   
         log.info("Home.report")
         user_id = self.get_argument("user_id")
-        url = self.get_argument("url")
+        host = self.get_argument("host")
+        page = self.get_argument("page")
         auto = self.get_argument("auto") == "true"
-        parts = urlparse(url)
-        host, page = parts.netloc, ("%s?%s" % (parts.path, parts.query)) if len(parts.query) else parts.path
-        if not host:
-            host = page
-        host = host.replace("www.", "")
         model.insert_visit(user_id, host, page, auto)
         future = find_future(user_id, host)
         if future is None:
@@ -44,7 +39,7 @@ class Home(server.Handler):
             return self.text("NOFUTURE")
         else:
             log.info("--> future: %s" % (future,))
-        return self.text("%s %s" % future)
+        return self.text("%s %s %s" % future)
 
 
 def main():
