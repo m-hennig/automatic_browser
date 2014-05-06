@@ -43,6 +43,7 @@ function turnOn () {
 function turnOff () {
     console.log("background.turnOff");  
     active = false;
+    if (timeout != null) clearTimeout(timeout);    
     chrome.browserAction.setIcon({path: "icon_19_disable.png"});
 }
 
