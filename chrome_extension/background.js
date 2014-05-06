@@ -20,14 +20,16 @@ function initUser () {
             user_id = data['user_id'];
             key = data['key'];
             console.log("user_id is " + user_id);
+            console.log("key is " + key);
         } else {
             console.log("getting new user id");
             $.post(SERVER, {'action': "new_user"}, function (data) {
-                console.log(data);
                 user_id = data;
                 key = Math.random().toString(36).slice(2); // random 16-digit string
                 chrome.storage.sync.set({"user_id": data});
                 chrome.storage.sync.set({"key": key});
+                console.log("user_id is " + user_id);
+                console.log("key is " + key);
             });
         }
     });
@@ -94,13 +96,16 @@ function postUrl () {
         var page = 'NONE';
     }
     $.post(SERVER, {action: 'report', user_id: user_id, host: host, page: page, auto: auto}, function(data) {
-        console.log("post result: " + data);
-        if (data == "NOFUTURE") return;
+        if (data == "NOFUTURE") {
+            console.log("--> received NO FUTURE");
+            return;
+        }
         var parts = data.split(" ");
         var host = parts[0];
         var page = parts[1];
         var delay = parts[2];
         var url = "http://" + decrypt(host) + (page == '/' ? '/' : decrypt(page));
+        console.log("--> received future: " + url);
         timeout = setTimeout(function () {
             chrome.tabs.getSelected(null, function (tab) {
                 auto = true;
@@ -125,8 +130,9 @@ function parseURL (url) {
 }
 
 function encrypt (message) {
+    /* deterministic encryption for server-side comparison, but key is client-side only and unique to user */
     // return message
-    var encrypted = CryptoJS.AES.encrypt(message, key);    
+    var encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Hex.parse(key), {iv: CryptoJS.enc.Hex.parse(key)});    
     var encoded = base32.encode("" + encrypted);
     return encoded;
 }
@@ -134,7 +140,7 @@ function encrypt (message) {
 function decrypt (encoded) {    
     // return encoded
     var decoded = base32.decode(encoded);    
-    var decrypted = CryptoJS.AES.decrypt(decoded, key);    
+    var decrypted = CryptoJS.AES.decrypt(decoded, CryptoJS.enc.Hex.parse(key), {iv: CryptoJS.enc.Hex.parse(key)});    
     var message = decrypted.toString(CryptoJS.enc.Utf8);
     return message;
 }

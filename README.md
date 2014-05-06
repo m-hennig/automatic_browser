@@ -3,7 +3,7 @@ Automatic Browser
 
 Automatic Browser browses for you, just like you would.
 
->"...we are unfashioned creatures, but half made up, if one wiser, better, dearer than ourselves – such a friend ought to be – do not lend his aid to perfectionate our weak and faulty natures."
+>...we are unfashioned creatures, but half made up, if one wiser, better, dearer than ourselves – such a friend ought to be – do not lend his aid to perfectionate our weak and faulty natures.
   
   
 "Google Chrome Hal" Icon courtesy [Xylomon](http://xylomon.deviantart.com/)

@@ -61,15 +61,16 @@ class Site(object):
         else:
             site = random.choice(self.nexts)    # duplicate entries mean distribution is correct, abusing memory space a bit, how's that gonna scale...
         page = random.choice(site.pages) if len(site.pages) else '/'
-        std_dev = np.std(self.durations)
-        seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
-        if math.isnan(seconds):
+        if len(self.durations):
+            std_dev = np.std(self.durations)
+            seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
+            seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up
+        else:
             seconds = 0.0
-        seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up
         return site.host, page, 10000 #int(seconds * 1000)
 
     def __str__(self):
-        return "%s\n\t%s, %s\n\t%s\n" % (self.host, np.mean(self.durations), np.std(self.durations), self.pages)
+        return "%s\n\t%s, %s\n\t%s\n" % (self.host, np.mean(self.durations) if len(self.durations) else 0.0, np.std(self.durations) if len(self.durations) else 0.0, self.pages)
 
 
 def find_future(user_id, host):
@@ -85,7 +86,7 @@ def find_future(user_id, host):
 
 
 if __name__ == "__main__":
-    user_id = "e39b180fde96525298a0ff09ad229a2e"
+    user_id = "78c682d735ba528f91470076769f3e21"
     t = time.clock()
     future = find_future(user_id, "twitter.com")
     log.debug(future)
