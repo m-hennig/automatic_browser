@@ -9,7 +9,7 @@ process.secure_pid(os.path.join(os.path.dirname(__file__), "run"))
 class Home(server.Handler):
 
     def get(self, page=None):
-        return self.render("blank.html")
+        return self.render("home.html")
 
     def post(self, nop=None):
         action = self.get_argument("action", None)     

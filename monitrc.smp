@@ -21,6 +21,6 @@ set daemon 120
 set httpd port 2812 and use address localhost   # configure monitoring webservice
   allow 0.0.0.0/0.0.0.0                        # Allow everything to connect  
 
-check process main_server with pidfile /home/ubuntu/automatic_browser/run/main.pid
+check process main_automatic_browser with pidfile /home/ubuntu/automatic_browser/run/main.pid
   start program = "/usr/bin/python3 /home/ubuntu/automatic_browser/main.py" 
   stop program = "/bin/pwd"

@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US"> 
+<head>
+    <title>Automatic Browser</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-language" content="en" />
+    <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="author" content="Brian House" /> 
+    <meta name="copyright" content="Brian House" /> 
+    <meta name="keywords" content="net art, chrome extension, privacy, intimacy" /> 
+    <meta name="description" content="Automatic Browser browses for you, just like you would." />     
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:image" content="http://google-nest.org/img/fav/facebook.jpg" />
+    <meta property="og:url" content="http://google-nest.org" />
+    <meta property="og:title" content="Google Nest" />
+    <meta property="og:description" content="Google Nest products offer you a future built by you, for you." />
+    <meta property="og:type" content="website" />
+    
+    <link rel="icon" href="img/fav/favicon.png" type="image/png" />  
+    <link rel="shortcut icon" href="img/fav/favicon.png" type="image/png" />
+
+    <link rel="apple-touch-icon" href="img/fav/apple-touch-57.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="img/fav/apple-touch-72.png"/>  
+    <link rel="apple-touch-icon" sizes="114x114" href="img/fav/apple-touch-114.png"/> 
+
+    <link rel="image_src" href="img/fav/facebook.jpg" />    
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300" rel="stylesheet" type="text/css"> 
+    <!-- google analytics -->
+    <script type="text/javascript">
+
+
+    </script>    
+
+    <style type="text/css">
+        body {
+            margin: 50px 0 200px;
+            /*background-color: #0bc0c2;*/
+            font: 16px Arial, Helvetica, sans-serif;            
+            -webkit-font-smoothing: antialiased;            
+        }
+        #main {
+            margin: auto;            
+            width: 800px;
+        }
+        #title {
+            font: 50px 'Open Sans', sans-serif;
+            font-weight: 300;
+            text-align: center;
+            margin: 0px 50px 20px;
+            color: #000;
+        }
+            #title #tagline {
+                font-size: 38px;
+                margin-top: 0px;
+                color: #666;
+            }            
+        #logo {
+            display: block;
+            width: 128px;
+            height: 128px;
+            margin: 0px auto 60px;
+        }
+        #download {
+            margin: 0px auto 60px;
+            width: 420px;
+            /*background-color: yellow;*/
+        }
+            #download #add_button {
+                /*border-color: #;*/
+                background-color: #08c; 
+                /*#4d7bd6;*/
+                padding: 10px 15px 10px 15px;
+                display: inline-block;
+                border-radius: 2px;
+                border: 1px solid #666;
+                cursor: pointer;
+                color: #fff;
+                font-weight: bold;
+                text-align: center;
+                text-shadow: 0 1px 1px rgba(0,0,0,0.1);            
+                text-transform: uppercase;
+                box-shadow: 0 4px 0 0 rgba(255,255,255,.06) ,0 4px 6px 0 rgba(0,0,0,.4);
+                outline: 0px;
+                font-family: 'Open Sans', arial, sans-serif;
+                text-decoration: none;
+                font-size: 12px;
+            }
+                #download #add_button:hover {
+                    background: -webkit-linear-gradient(top,#008dcc 0%,#0370ea 100%);
+                }
+            #download #info {
+                width: 200px;
+                font-size: 14px;
+                float: right;
+                position: relative;
+                padding-top: 5px;
+            }
+        #description {
+            width: 420px;
+            margin: 0px auto 20px;
+            /*font: 16px "Open Sans", sans-serif;*/
+            font-weight: 400;
+            line-height: 25px;
+            /*text-align: center;*/
+            color: #666;
+            /*background-color: #ffa900;*/
+        }
+        #details {
+            border: 2px solid #e9e9e9;
+            background-color: #f8f8f8;
+            height: 400px;
+            margin: 0px auto 100px;
+        }
+        #frank {
+            margin: 0px auto 100px;
+            width: 800px;
+            font: 20px "Open Sans", sans-serif;
+            font-style: italic;
+            font-weight: 400;
+            line-height: 30px;
+        }
+        #credit {
+            border-top: 1px solid #e9e9e9;
+            padding-top: 15px;
+            font-size: 16px;
+            margin: 0px auto;
+        }
+        a {
+            text-decoration: none;
+            color: #08c;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/gh-fork-ribbon.css">
+    <!--[if lt IE 9]>
+        <link rel="stylesheet" href="/static/css/gh-fork-ribbon.ie.css">
+    <![endif]-->    
+</head>
+<body>
+
+<div class="github-fork-ribbon-wrapper right">
+    <div class="github-fork-ribbon">
+        <a href="https://github.com/brianhouse/automatic_browser">Fork me on GitHub</a>
+    </div>
+</div> 
+
+<div id="main">
+
+    <div id="title">
+        Automatic Browser
+        <div id="tagline">
+            Browsing for you, just like you would.
+        </div>
+    </div>
+
+    <img id="logo" src="/static/img/logo.png" />
+
+    <div id="description">
+        Automatic Browser is an extension for Google Chrome which learns how you browse &mdash; then sit back, relax, and it will do the work for you, automatically visiting the sites you were probably planning on looking at anyway. It will even offer some improvements.
+    </div>
+
+    <!-- should be switch here if youre not browsing with Chrome -->
+    <div id="download">
+        <a id="add_button" href="https://chrome.google.com/webstore/detail/tanglr/anhpnanphhhphafiblilbggemelijnpn">Add to Google Chrome</a>
+        <div id="info">
+            Download version 1.0.1 from the Chrome Web Store now
+        </div>
+    </div>
+
+
+    <div id="details">
+
+    </div>
+
+    <div id="frank">
+        ...we are unfashioned creatures, but half made up, if one wiser, better, dearer than ourselves &mdash; such a friend ought to be &mdash; do not lend his aid to perfectionate our weak and faulty natures.
+    </div>
+
+    <div id="credit">
+        <a id="credit" href="http://brianhouse.net">brianhouse.net</a> <span style="text-align: right;"> Tweet | Facebook</span>
+    </div>
+
+</div>
+
+</body>
+</html>
