@@ -120,12 +120,19 @@ body {
 }
     #credit #link {
         float: left;
-        width: 400px;
+        width: 200px;
         /*background-color: orange;*/
+    }
+    #credit #image_cred {
+        float: left;
+        width: 400px;
+        padding-top: 3px;
+        font-size: 12px;
+        text-align: center;
     }
     #credit #social {
         float: right;
-        width: 400px;
+        width: 200px;
         /*background-color: green;*/
         text-align: right;
     }
