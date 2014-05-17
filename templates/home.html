@@ -11,8 +11,7 @@
     <meta name="keywords" content="net art, chrome extension, privacy, intimacy" /> 
     <meta name="description" content="Automatic Browser browses for you, just like you would." />     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />            
-
-    <meta property="og:image" content="http://automaticbrowser/static/img/logo.png" />
+    <meta property="og:image" content="/static/img/logo.png" />
     <meta property="og:url" content="http://automaticbrowser.com" />
     <meta property="og:title" content="Automatic Browser" />
     <meta property="og:description" content="Automatic Browser browses for you, just like you would." />
@@ -21,11 +20,6 @@
     <link rel="icon" href="/static/img/logo.png" type="image/png" />  
     <link rel="shortcut icon" href="/static/img/logo.png" type="image/png" />
 
-    <link rel="apple-touch-icon" href="img/fav/apple-touch-57.png"/>
-    <link rel="apple-touch-icon" sizes="72x72" href="img/fav/apple-touch-72.png"/>  
-    <link rel="apple-touch-icon" sizes="114x114" href="img/fav/apple-touch-114.png"/> 
-
-    <link rel="image_src" href="/static/img/logo.png" />    
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300" rel="stylesheet" type="text/css"> 
     <!-- <link rel="stylesheet" href="/static/css/style.css"> -->
     <link rel="stylesheet" href="/static/css/gh-fork-ribbon.css">
@@ -46,9 +40,7 @@ body, html {
     -webkit-font-smoothing: antialiased;            
 }
 #main {
-    margin: auto;            
-    max-width: 800px;
-    min-width: 320px;
+    width: 100%;
 }
 #title {    
     font: 50px 'Open Sans', sans-serif;
@@ -68,10 +60,21 @@ body, html {
     height: 128px;
     margin: 0 auto 60px;
 }
+#description {
+    background-color: #efefef;
+    margin: 0 auto 0;
+    font-weight: 400;
+    line-height: 25px;
+    color: #666;
+    padding: 60px;
+    font-size: 18px;
+}
 #download {
-    margin: 0 auto 60px;
-    /*width: 420px;*/
-    /*background-color: yellow;*/
+    /*background-color: #efefef;*/
+    margin: 60px auto 0;
+    padding: 0px 60px 60px 60px;
+    text-align: center;
+    display: none;
 }
     #download #add_button {
         /*border-color: #;*/
@@ -97,89 +100,74 @@ body, html {
             background: -webkit-linear-gradient(top,#008dcc 0%,#0370ea 100%);
         }
     #download #info {
-        max-width: 200px;
+        display: inline-block;
         font-size: 14px;
-        float: right;
-        position: relative;
-        padding-top: 5px;
+        padding-top: 15px;
     }
-#description {
-    max-width: 420px;
-    margin: 0 auto 20px;
-    /*font: 16px "Open Sans", sans-serif;*/
-    font-weight: 400;
-    line-height: 25px;
-    /*text-align: center;*/
+.details {
+    padding: 60px 180px;
+    text-align: center;
     color: #666;
-    /*background-color: #ffa900;*/
-    padding: 0 30px 0;
+    font-weight: 400;
+    line-height: 25px;    
 }
-#details {
-    margin: 0 auto 60px;
-}
-    #details .column {
-        border: 2px solid #e9e9e9;
-        background-color: #f8f8f8;
-        height: 400px;
-        max-width: 336px;
-        float: left;
-        padding: 30px;
-        text-align: center;
-        color: #666;
-        font-size: 14px;
-        line-height: 20px;
-        /*background-color: orange;*/
+    .details .heading {
+        font: 30px "Open Sans", sans-serif;
+        font-weight: 300;
+        margin-bottom: 10px;
     }
-        #details .column .heading {
-            font: 30px "Open Sans", sans-serif;
-            font-weight: 300;
-            margin-bottom: 10px;
-        }
-        #details .column img {
-            width: 75px;
-            height: 75px;
-            margin-bottom: 30px;
-            float: none;
-        }
-        #details .column .text {
-            text-align: left;
-        }
+    .details img {
+        width: 75px;
+        height: 75px;
+        margin-bottom: 30px;
+        float: none;
+    }
+    .details .text {
+        text-align: left;
+    }
 #frank {
-    margin: 0 auto 60px;
-    max-width: 600px;
+    background-color: #efefef;    
+    margin: 0;
     font: 20px "Open Sans", sans-serif;
     font-style: italic;
     font-weight: 400;
     line-height: 30px;
-    text-align: center;
+    /*text-align: center;*/
     color: #666;
-    padding: 0 30px 0;
+    padding: 60px;
 }
-#credit {
-    border-top: 1px solid #e9e9e9;
-    padding-top: 15px;
+#credit {    
     font-size: 16px;
-    margin: 0 auto 0;
+    margin: 120px 0;
     /*background-color: yellow;*/
+    line-height: 24px;
+    text-align: center;
 }
     #credit #link {
         float: left;
-        max-width: 200px;
+        width: 30%;
         /*background-color: orange;*/
     }
     #credit #image_cred {
-        float: left;
-        max-width: 400px;
-        padding-top: 3px;
         font-size: 12px;
         text-align: center;
+        margin: 0 0 6px;
     }
     #credit #social {
         float: right;
-        max-width: 200px;
+        width: 30%;
         /*background-color: green;*/
         text-align: right;
     }
+        #credit img {
+            width: 20px;
+            height: 20px;
+        }
+hr {
+    border: none;
+    border-top: 1px solid #e9e9e9;
+    margin: 0 180px 0;
+}    
 a {
     text-decoration: none;
     color: #08c;
@@ -187,16 +175,15 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
     </style>
 </head>
 <body>
 
-<!-- <div class="github-fork-ribbon-wrapper right">
+<div class="github-fork-ribbon-wrapper right">
     <div class="github-fork-ribbon">
         <a href="https://github.com/brianhouse/automatic_browser">Fork me on GitHub</a>
     </div>
-</div>  -->
+</div> 
 
 <div id="main">
 
@@ -210,68 +197,49 @@ a:hover {
     <img id="logo" src="/static/img/logo.png" />
 
     <div id="description">
-        Automatic Browser is an extension for Google Chrome which learns how you browse &mdash; then sit back, relax, and it will do the work for you, automatically visiting the sites you were probably planning on looking at anyway. It might even offer some improvements.
+        Automatic Browser is an <a href="https://chrome.google.com/webstore/detail/automatic-browser/gnbahncdnmndeemadojbkeflbmbpibkb">extension</a> for Google Chrome that learns how you browse &mdash; then sit back, relax, and it will do the work for you, automatically visiting the sites you were probably going to look at anyway. It might even offer some improvements.
     </div>
 
     <!-- should be switch here if youre not browsing with Chrome -->
     <div id="download">
         <a id="add_button" href="https://chrome.google.com/webstore/detail/automatic-browser/gnbahncdnmndeemadojbkeflbmbpibkb">Add to Google Chrome</a>
+        <br />
         <div id="info">
             Download version 1.0.1 from the Chrome Web Store now
         </div>
     </div>
 
-
-    <div id="details">
-        <div class="column"> <!-- style="background-color: green;"> -->
-            <div class="heading">
-                It's here:<br />predictive browsing.
-            </div>
-            <img src="/static/img/algorithm.png" />
-            <div class="text">
-                The future means not having to tell your browser what you want to do. Automatic Browser creates a statistical model from your past behavior, logging what sites you have visited, for how long, and in what order. When you visit a site, it decides where and when you're likely to go next, and it browses that for you.
-            </div>
+    <div style="height: 60px;"></div>
+    <div class="details"> <!-- style="background-color: green;"> -->
+        <div class="heading">
+            Predictive browsing.
         </div>
-        <div class="column" style="float: right;">
-            <div class="heading">
-                It looks out for your privacy.
-            </div>
-            <img src="/static/img/security.png" /><br />
-            <div class="text">
-                Automatic Browser does not transmit urls to the server &mdash; only cryptographic tokens. No administrators can look at your data, and there is nothing for hackers to intercept. Which means your browsing history stays safe.
-            </div>
-        </div>        
-        <div style="clear: both;"></div>        
+        <img src="/static/img/future.png" />
+        <div class="text">
+            Why have to tell your browser what you want to do? Automatic Browser creates a statistical model from your past behavior, logging what sites you have visited and for how long<!-- , and detecting how frequently you try new things or if you remain a creature of habit -->. When you visit a site, it decides where and when you're likely to go next, and it browses there for you. Surprising? Yes, but we often surprise ourselves.
+        </div>
     </div>
-
+    <hr />
+    <div class="details">
+        <div class="heading">
+            Private browsing.
+        </div>
+        <img src="/static/img/security.png" /><br />
+        <div class="text">
+            Automatic Browser does not transmit URLs to the server &mdash; only cryptographic tokens. No administrators can look at your data, and there is nothing for hackers to intercept. Which means your browsing history stays safe.
+        </div>
+    </div>        
+    <div style="height: 60px;"></div>
 
     <div id="frank">
         ...we are unfashioned creatures, but half made up, if one wiser, better, dearer than ourselves &mdash; such a friend ought to be &mdash; do not lend his aid to perfectionate our weak and faulty natures.
     </div>
 
-    <!-- social scripts -->
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=360920457301311&version=v2.0";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
     <div id="credit">
-        <div id="link">
-            <a href="http://brianhouse.net">brianhouse.net</a>
-        </div>
-        <div id="image_cred">
-            Icon courtesy <a href="http://xylomon.deviantart.com/" target="_blank">Patrick Geller</a>
-        </div>
-        <div id="social">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a>
-            <div class="fb-like" data-href="http://automaticbrowser.com" data-layout="button" data-action="like" data-show-faces="false" data-share="false" style="top: -4px;"></div>
-        </div>
-        <div style="clear: both;"></div>
+        <a href="http://brianhouse.net" style="color: #d00;">brianhouse.net</a><br />
+        <div id="image_cred">Icon courtesy <a href="http://xylomon.deviantart.com/" target="_blank">Patrick Geller</a></div>
+        <a href="https://twitter.com/share?via=h0use&url=http://automaticbrowser.com"><img src="/static/img/twitter.png" /></a>
+        <a href="http://www.facebook.com/share.php?u=http://automaticbrowser.com"><img src="/static/img/facebook.png" /></a>
     </div>
 
 </div>
