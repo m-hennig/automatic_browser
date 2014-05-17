@@ -47,7 +47,7 @@ body, html {
     font-weight: 300;
     text-align: center;
     margin: 50px 50px 20px;
-    color: #000;
+    color: black;
 }
     #title #tagline {
         font-size: 38px;
@@ -69,62 +69,66 @@ body, html {
     padding: 60px;
     font-size: 18px;
 }
-#download {
-    /*background-color: #efefef;*/
-    margin: 60px auto 0;
-    padding: 0px 60px 60px 60px;
-    text-align: center;
-    display: none;
+
+#details {
+    margin: 60px auto 60px;
+    max-width: 560px;
 }
-    #download #add_button {
-        /*border-color: #;*/
-        background-color: #08c; 
-        /*#4d7bd6;*/
-        padding: 10px 15px 10px 15px;
-        display: inline-block;
-        border-radius: 2px;
-        border: 1px solid #666;
-        cursor: pointer;
-        color: #fff;
-        font-weight: bold;
+    #details .item {
+        padding: 60px 30px;
         text-align: center;
-        text-shadow: 0 1px 1px rgba(0,0,0,0.1);            
-        text-transform: uppercase;
-        box-shadow: 0 4px 0 0 rgba(255,255,255,.06) ,0 4px 6px 0 rgba(0,0,0,.4);
-        outline: 0px;
-        font-family: 'Open Sans', arial, sans-serif;
-        text-decoration: none;
-        font-size: 12px;
+        color: #666;
+        font-weight: 400;
+        line-height: 25px;    
     }
-        #download #add_button:hover {
-            background: -webkit-linear-gradient(top,#008dcc 0%,#0370ea 100%);
+        #details .item .heading {
+            font: 30px "Open Sans", sans-serif;
+            font-weight: 300;
+            margin-bottom: 10px;
+            color: black;
         }
-    #download #info {
-        display: inline-block;
-        font-size: 14px;
-        padding-top: 15px;
-    }
-.details {
-    padding: 60px 180px;
-    text-align: center;
-    color: #666;
-    font-weight: 400;
-    line-height: 25px;    
-}
-    .details .heading {
-        font: 30px "Open Sans", sans-serif;
-        font-weight: 300;
-        margin-bottom: 10px;
-    }
-    .details img {
-        width: 75px;
-        height: 75px;
-        margin-bottom: 30px;
-        float: none;
-    }
-    .details .text {
-        text-align: left;
-    }
+        #details .item img {
+            width: 75px;
+            height: 75px;
+            margin-bottom: 30px;
+            float: none;
+        }
+        #details .item .text {
+            text-align: left;
+        }
+        #details .download {
+            border: 2px solid #e9e9e9;
+            background-color: #f8f8f8;
+            margin: 30px 0 120px;
+        }
+        #details .download #add_button {
+            /*border-color: #;*/
+            background-color: #08c; 
+            /*#4d7bd6;*/
+            padding: 10px 15px 10px 15px;
+            display: inline-block;
+            border-radius: 2px;
+            border: 1px solid #666;
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);            
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 0 rgba(255,255,255,.06) ,0 4px 6px 0 rgba(0,0,0,.4);
+            outline: 0px;
+            font-family: 'Open Sans', arial, sans-serif;
+            text-decoration: none;
+            font-size: 12px;
+        }
+            #details .download #add_button:hover {
+                background: -webkit-linear-gradient(top,#008dcc 0%,#0370ea 100%);
+            }
+        #details .download #info {
+            display: inline-block;
+            font-size: 14px;
+            padding-top: 15px;
+        }        
 #frank {
     background-color: #efefef;    
     margin: 0;
@@ -166,7 +170,7 @@ body, html {
 hr {
     border: none;
     border-top: 1px solid #e9e9e9;
-    margin: 0 180px 0;
+    margin: 0 30px;
 }    
 a {
     text-decoration: none;
@@ -200,36 +204,44 @@ a:hover {
         Automatic Browser is an <a href="https://chrome.google.com/webstore/detail/automatic-browser/gnbahncdnmndeemadojbkeflbmbpibkb">extension</a> for Google Chrome that learns how you browse &mdash; then sit back, relax, and it will do the work for you, automatically visiting the sites you were probably going to look at anyway. It might even offer some improvements.
     </div>
 
-    <!-- should be switch here if youre not browsing with Chrome -->
-    <div id="download">
-        <a id="add_button" href="https://chrome.google.com/webstore/detail/automatic-browser/gnbahncdnmndeemadojbkeflbmbpibkb">Add to Google Chrome</a>
-        <br />
-        <div id="info">
-            Download version 1.0.1 from the Chrome Web Store now
+    <div id="details">
+        <div class="item"> <!-- style="background-color: green;"> -->
+            <div class="heading">
+                Predictive browsing.
+            </div>
+            <img src="/static/img/future.png" />
+            <div class="text">
+                Why have to tell your browser what you want to do? We are creatures of habit, and those habits can easily be modeled by algorithms. That means it's easier to be online.
+            </div>
         </div>
+        <hr />    
+        <div class="item"> <!-- style="background-color: green;"> -->
+            <div class="heading">
+                Personal browsing.
+            </div>
+            <img src="/static/img/personal.png" />
+            <div class="text">
+                Each of us is unique. That's why Automatic Browser creates a statistical model from your past behavior, logging what sites you have visited and for how long. When you visit a site, it decides where and when you're likely to go next, and it browses there for you. Surprising? Yes, but we often surprise ourselves.
+            </div>
+        </div>
+        <hr />
+        <div class="item">
+            <div class="heading">
+                Private browsing.
+            </div>
+            <img src="/static/img/security.png" /><br />
+            <div class="text">
+                Automatic Browser does not transmit URLs to the server &mdash; only cryptographic tokens. No administrators can look at your data, and there is nothing for hackers to intercept. Which means your browsing history stays safe.
+            </div>
+        </div>        
+        <div class="item download">
+            <a id="add_button" href="https://chrome.google.com/webstore/detail/automatic-browser/gnbahncdnmndeemadojbkeflbmbpibkb">Add to Google Chrome</a>
+            <br />
+            <div id="info">
+                Download version 1.0.1 from the Chrome Web Store now
+            </div>
+        </div>        
     </div>
-
-    <div style="height: 60px;"></div>
-    <div class="details"> <!-- style="background-color: green;"> -->
-        <div class="heading">
-            Predictive browsing.
-        </div>
-        <img src="/static/img/future.png" />
-        <div class="text">
-            Why have to tell your browser what you want to do? Automatic Browser creates a statistical model from your past behavior, logging what sites you have visited and for how long<!-- , and detecting how frequently you try new things or if you remain a creature of habit -->. When you visit a site, it decides where and when you're likely to go next, and it browses there for you. Surprising? Yes, but we often surprise ourselves.
-        </div>
-    </div>
-    <hr />
-    <div class="details">
-        <div class="heading">
-            Private browsing.
-        </div>
-        <img src="/static/img/security.png" /><br />
-        <div class="text">
-            Automatic Browser does not transmit URLs to the server &mdash; only cryptographic tokens. No administrators can look at your data, and there is nothing for hackers to intercept. Which means your browsing history stays safe.
-        </div>
-    </div>        
-    <div style="height: 60px;"></div>
 
     <div id="frank">
         ...we are unfashioned creatures, but half made up, if one wiser, better, dearer than ourselves &mdash; such a friend ought to be &mdash; do not lend his aid to perfectionate our weak and faulty natures.
