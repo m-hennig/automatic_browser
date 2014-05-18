@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import json, model, random, time, math
+import json, model, random, time, math, novelty_generator
 import numpy as np
 from housepy import config, log
 
 MIN_DURATION = .17 * 60  # let's not make it too flippy, Stan, minimum on a site
-MAX_DURATION =  15 * 60  # you're not really spending more than this on a site ;)
+MAX_DURATION =  10 * 60  # you're not really spending more than this on a site ;)
 MIN_MODEL_SIZE = 5       # don't do anything until we have a decent model
 JUMP_PROB = .4           # any node in the chain includes JUMP_PROB of transitioning to a random node
 
@@ -66,7 +66,8 @@ class Model(object):
         self.pages = []        
         
     def find_next(self):
-        if random.random() > Model.calc_novelty():
+        # if random.random() > Model.calc_novelty():
+        if False:
             if random.random() > JUMP_PROB:             # follow the chain
                 if not len(self.nexts):                 # new site, not enough info, choose most common site            
                     site = max(Model.sites_exclude(self), key=lambda site: len(site.durations))
@@ -74,16 +75,19 @@ class Model(object):
                     site = random.choice(self.nexts)    # duplicate entries mean prob distribution is correct, abusing memory space a bit, how's that gonna scale...
             else:                                       
                 site = random.choice(Model.sites_exclude(self))             # jump the chain to a random site in the model
+            page = random.choice(site.pages) if len(site.pages) else '/'     # keep with deep paths if possible
+            if len(self.durations):
+                std_dev = np.std(self.durations)
+                seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
+            else:
+                seconds = 0.0
+            seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up            
+            return site.host, page, int(seconds * 1000)
+
         else:
-            pass    # get a novel site
-        page = random.choice(site.pages) if len(site.pages) else '/'        # keep with deep paths if possible
-        if len(self.durations):
-            std_dev = np.std(self.durations)
-            seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
-            seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up
-        else:
-            seconds = 0.0
-        return site.host, page, int(seconds * 1000)
+            url = novelty_generator.get_url()
+            seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION
+            return "CLEAR", url, int(seconds * 1000)   # kinda hacky
 
 
     def __str__(self):

@@ -1,4 +1,5 @@
+make note of "corrections" -- the user hitting the back button
 
-how to get a list of novel sites?
+actually using this will result in an acceleration of the tempo of browsing, because corrections will only decrease average durations
 
-scrape twitter
+that's kind of nice, actually.

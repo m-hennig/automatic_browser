@@ -1,4 +1,5 @@
-var SERVER = "http://automaticbrowser.com";
+// var SERVER = "http://automaticbrowser.com";
+var SERVER = "http://localhost:5050";
 var active = false;
 var current_url = "NONE";
 var user_id = null;
@@ -106,12 +107,11 @@ function postUrl () {
         var host = parts[0];
         var page = parts[1];
         var delay = parts[2];
-        var url = "http://" + decrypt(host) + (page == '/' ? '/' : decrypt(page));
+        var url = host == "CLEAR" ? page : "http://" + decrypt(host) + (page == '/' ? '/' : decrypt(page));
         if (verbose) console.log("--> received future: " + url);
         timeout = setTimeout(function () {
             chrome.tabs.getSelected(null, function (tab) {
                 auto = true;
-                console
                 if (url != current_url) {
                     chrome.tabs.update(tab.id, {url: url});
                 } else {
