@@ -4,22 +4,23 @@ import json, model, random, time, math
 import numpy as np
 from housepy import config, log
 
-MIN_DURATION = .25 * 60  # let's not make it too flippy, stan, 15s minimum
-MAX_DURATION =  15 * 60  # you're not really spending more than 15 minutes on a site ;)
-MIN_MODEL_SIZE = 5
+MIN_DURATION = .17 * 60  # let's not make it too flippy, Stan, minimum on a site
+MAX_DURATION =  15 * 60  # you're not really spending more than this on a site ;)
+MIN_MODEL_SIZE = 5       # don't do anything until we have a decent model
+JUMP_PROB = .4           # any node in the chain includes JUMP_PROB of transitioning to a random node
 
-class Site(object):
+class Model(object):
 
     sites = {}
 
     @classmethod
-    def build_model(cls, user_id, host):
+    def build(cls, user_id, host):
         if host == "NONE":
             return None
         visits = model.fetch_visits(user_id)
-        visits = visits[:-1] if visits[-1]['host'] == host else visits     # dont include current site in analysis
-        if not len(visits):
+        if len(visits) < 2:
             return None
+        visits = visits[:-1] if visits[-1]['host'] == host else visits     # dont include current site in analysis
         cls.sites = {}
         v = n = 0
         site = cls.get(visits[v]['host'])
@@ -39,28 +40,43 @@ class Site(object):
                 site.durations.append(max(min(duration, MAX_DURATION), MIN_DURATION))
             site = next_site
             v = n
-        if 'NONE' in Site.sites:
-            del Site.sites['NONE']
+        if 'NONE' in Model.sites:
+            del Model.sites['NONE']
         return True
 
     @classmethod
     def get(cls, host):
         if not host in cls.sites:
-            cls.sites[host] = Site(host)
+            cls.sites[host] = Model(host)
         return cls.sites[host]
+
+    @classmethod
+    def calc_novelty(cls):
+        total_visits = sum([len(site.durations) for site in cls.sites.values()])
+        return len(cls.sites) / total_visits
+
+    @classmethod
+    def sites_exclude(cls, current):
+        return [site for site in cls.sites.values() if site != current]
 
     def __init__(self, host):
         self.host = host
         self.durations = []        
         self.nexts = []
-        self.pages = []
+        self.pages = []        
         
     def find_next(self):
-        if not len(self.nexts):                 # new site, not enough info, choose most common site            
-            site = max([site for site in Site.sites.values() if site != self], key=lambda site: len(site.durations))            
+        if random.random() > Model.calc_novelty():
+            if random.random() > JUMP_PROB:             # follow the chain
+                if not len(self.nexts):                 # new site, not enough info, choose most common site            
+                    site = max(Model.sites_exclude(self), key=lambda site: len(site.durations))
+                else:
+                    site = random.choice(self.nexts)    # duplicate entries mean prob distribution is correct, abusing memory space a bit, how's that gonna scale...
+            else:                                       
+                site = random.choice(Model.sites_exclude(self))             # jump the chain to a random site in the model
         else:
-            site = random.choice(self.nexts)    # duplicate entries mean distribution is correct, abusing memory space a bit, how's that gonna scale...
-        page = random.choice(site.pages) if len(site.pages) else '/'
+            pass    # get a novel site
+        page = random.choice(site.pages) if len(site.pages) else '/'        # keep with deep paths if possible
         if len(self.durations):
             std_dev = np.std(self.durations)
             seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
@@ -69,24 +85,26 @@ class Site(object):
             seconds = 0.0
         return site.host, page, int(seconds * 1000)
 
+
     def __str__(self):
-        return "%s\n\t%s, %s\n\t%s\n" % (self.host, np.mean(self.durations) if len(self.durations) else 0.0, np.std(self.durations) if len(self.durations) else 0.0, self.pages)
+        return "%s\n\t%f, %f\n\t%s\n" % (self.host, np.mean(self.durations) if len(self.durations) else 0.0, np.std(self.durations) if len(self.durations) else 0.0, self.pages)
 
 
 def find_future(user_id, host):
-    if Site.build_model(user_id, host) is None:
+    if Model.build(user_id, host) is None:
         return None
     if __name__ == "__main__":
-        for host, site in Site.sites.items():
+        for host, site in Model.sites.items():
             log.debug(site)
-    if len(Site.sites) < max(2, MIN_MODEL_SIZE):                                # the model is too small
+        log.debug("Novelty: %f" % Model.calc_novelty())
+    if len(Model.sites) < max(2, MIN_MODEL_SIZE):                                # the model is too small
         return None
-    future = Site.get(host).find_next()
+    future = Model.get(host).find_next()
     return future        
 
 
 if __name__ == "__main__":
-    user_id = "78c682d735ba528f91470076769f3e21"
+    user_id = "e29d909b34d7ced11f67440a74f95f1e"
     t = time.clock()
     future = find_future(user_id, "twitter.com")
     log.debug(future)
