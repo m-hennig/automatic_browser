@@ -12,35 +12,40 @@ t = Twitter(auth=OAuth(config['twitter']['access_token'], config['twitter']['acc
 
 def get_url():
     log.info("novelty_generator.get_url()")
-    if random.random() < 0.3:
-        topic = random.choice(topics)
-        log.info("--> chose %s..." % topic)
-        statuses = t.search.tweets(q=topic)['statuses']    
-    else:
-        owner_screen_name, slug = random.choice(lists)
-        log.info("--> chose %s..." % slug)
-        statuses = t.lists.statuses(owner_screen_name=owner_screen_name, slug=slug)
+    try:
+        if random.random() < 0.3:
+            topic = random.choice(topics)
+            log.info("--> chose %s..." % topic)
+            statuses = t.search.tweets(q=topic)['statuses']    
+        else:
+            owner_screen_name, slug = random.choice(lists)
+            log.info("--> chose %s..." % slug)
+            statuses = t.lists.statuses(owner_screen_name=owner_screen_name, slug=slug)
 
-    statuses = [status['text'] for status in statuses]
-    # log.debug(json.dumps(statuses, indent=4))
-    links = []
-    for status in statuses:
-        ascy = True
-        for letter in status:
-            if ord(letter) > 128:
-                ascy = False
-                break
-        if ascy is False:
-            continue
-        ls = re.search("(?P<url>https?://[^\s]+)", status)
-        if ls is None:
-            continue
-        links.append(ls.group("url"))
-    # log.debug(json.dumps(links, indent=4))
+        statuses = [status['text'] for status in statuses]
+        # log.debug(json.dumps(statuses, indent=4))
+        links = []
+        for status in statuses:
+            ascy = True
+            for letter in status:
+                if ord(letter) > 128:
+                    ascy = False
+                    break
+            if ascy is False:
+                continue
+            ls = re.search("(?P<url>https?://[^\s]+)", status)
+            if ls is None:
+                continue
+            links.append(ls.group("url"))
+        # log.debug(json.dumps(links, indent=4))
 
-    link = random.choice(links)
-    log.info(link)
-    return link
+        link = random.choice(links)
+        log.info(link)
+        return link
+    except Exception as e:
+        log.error(log.exc(e))
+        return "http://google.com"
+    
 
 
 if __name__ == "__main__":

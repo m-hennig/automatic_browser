@@ -32,6 +32,6 @@ def insert_visit(user_id, host, page, auto):
 def fetch_visits(user_id):
     # min_t = util.timestamp() - (7 * 24 * 60 * 60)
     # db.execute("SELECT t, host, page, auto FROM visits WHERE user_id=? AND t > ? ORDER BY t", (user_id, min_t)) # entries from the last week
-    db.execute("SELECT t, host, page, auto FROM visits WHERE user_id=? ORDER BY t LIMIT 1000", (user_id,))   # last 1000 entries
+    db.execute("SELECT t, host, page, auto FROM visits WHERE user_id=? ORDER BY t LIMIT 500", (user_id,))   # last 1000 entries
     visits = [dict(visit) for visit in db.fetchall()]
     return visits

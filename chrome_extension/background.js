@@ -1,5 +1,4 @@
-// var SERVER = "http://automaticbrowser.com";
-var SERVER = "http://localhost:5050";
+var SERVER = "http://automaticbrowser.com";
 var active = false;
 var current_url = "NONE";
 var user_id = null;

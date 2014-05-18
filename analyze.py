@@ -66,8 +66,8 @@ class Model(object):
         self.pages = []        
         
     def find_next(self):
-        # if random.random() > Model.calc_novelty():
-        if False:
+        if random.random() > Model.calc_novelty():
+
             if random.random() > JUMP_PROB:             # follow the chain
                 if not len(self.nexts):                 # new site, not enough info, choose most common site            
                     site = max(Model.sites_exclude(self), key=lambda site: len(site.durations))
