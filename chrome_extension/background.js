@@ -1,38 +1,39 @@
-var SERVER = "http://localhost:5050";
-var verbose = true;
-// var SERVER = "http://automaticbrowser.com";
+var SERVER = "http://automaticbrowser.com";
+var verbose = false;
+// var SERVER = "http://localhost:5050";
+// var verbose = true;
 var active = false;
 var current_url = "NONE";
 var user_id = null;
-var key = null;
+var user_key = null;
 var timeout = null;
 var auto = false;
 
 if (verbose) {
     console.log("Automatic Browser");
-    chrome.storage.sync.clear();
 }
 
+chrome.storage.local.clear();
 chrome.browserAction.setIcon({path: "icon_19_disable.png"});
 chrome.browserAction.setBadgeBackgroundColor({color: [255, 0, 0, 0]});
 
 function initUser () {
     if (verbose) console.log("initUser");
-    chrome.storage.sync.get("user_id", function(data) {
-        if (data['user_id'] != null && data['key'] != null) {
+    chrome.storage.local.get(null, function(data) {
+        if (data['user_id'] != null && data['user_key'] != null) {
+            if (verbose) console.log("retrieved user id");
             user_id = data['user_id'];
-            key = data['key'];
+            user_key = data['user_key'];
             if (verbose) console.log("user_id is " + user_id);
-            if (verbose) console.log("key is " + key);
+            if (verbose) console.log("user_key is " + user_key);
         } else {
             if (verbose) console.log("getting new user id");
             $.post(SERVER, {'action': "new_user"}, function (data) {
                 user_id = data;
-                key = Math.random().toString(36).slice(2); // random 16-digit string
-                chrome.storage.sync.set({"user_id": data});
-                chrome.storage.sync.set({"key": key});
+                user_key = Math.random().toString(36).slice(2); // random 16-digit string
+                chrome.storage.local.set({"user_id": user_id, "user_key": user_key});
                 if (verbose) console.log("user_id is " + user_id);
-                if (verbose) console.log("key is " + key);
+                if (verbose) console.log("user_key is " + user_key);
             });
         }
     });
@@ -136,7 +137,7 @@ function parseURL (url) {
 function encrypt (message) {
     /* deterministic encryption for server-side comparison, but key is client-side only and unique to user */
     // return message
-    var encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Hex.parse(key), {iv: CryptoJS.enc.Hex.parse(key)});    
+    var encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
     var encoded = base32.encode("" + encrypted);
     return encoded;
 }
@@ -144,7 +145,7 @@ function encrypt (message) {
 function decrypt (encoded) {    
     // return encoded
     var decoded = base32.decode(encoded);    
-    var decrypted = CryptoJS.AES.decrypt(decoded, CryptoJS.enc.Hex.parse(key), {iv: CryptoJS.enc.Hex.parse(key)});    
+    var decrypted = CryptoJS.AES.decrypt(decoded, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
     var message = decrypted.toString(CryptoJS.enc.Utf8);
     return message;
 }

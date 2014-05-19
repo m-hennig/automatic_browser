@@ -24,6 +24,7 @@ class Home(server.Handler):
     def new_user(self):
         log.info("Home.new_user")
         user_id = hashlib.md5(str(time.time()).encode('utf-8')).hexdigest()        
+        log.info("--> %s" % user_id)
         return self.text(user_id)
 
     def report(self):   
