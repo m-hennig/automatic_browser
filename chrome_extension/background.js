@@ -13,10 +13,13 @@ if (verbose) {
     console.log("Automatic Browser");
 }
 
-chrome.storage.local.clear();
-chrome.browserAction.setIcon({path: "icon_19_disable.png"});
+chrome.browserAction.setIcon({path: {
+        "19": "icon_19_disable.png",
+        "38": "icon_38_disable.png"
+    }
+});
 chrome.browserAction.setBadgeBackgroundColor({color: [255, 0, 0, 0]});
-turnOn();
+initUser();
 
 function initUser () {
     if (verbose) console.log("initUser");
@@ -27,39 +30,48 @@ function initUser () {
             user_key = data['user_key'];
             if (verbose) console.log("user_id is " + user_id);
             if (verbose) console.log("user_key is " + user_key);
+            if (data['active'] != null && data['active'] == true) {
+                turnOn();
+            }
         } else {
             if (verbose) console.log("getting new user id");
             $.post(SERVER, {'action': "new_user"}, function (data) {
                 user_id = data;
                 user_key = Math.random().toString(36).slice(2); // random 16-digit string
-                chrome.storage.local.set({"user_id": user_id, "user_key": user_key});
                 if (verbose) console.log("user_id is " + user_id);
                 if (verbose) console.log("user_key is " + user_key);
+                chrome.storage.local.set({"user_id": user_id, "user_key": user_key}, function () {
+                    turnOn();
+                });
             });
         }
     });
 }
 
 function turnOn () {
-    if (verbose) console.log("background.turnOn");  
+    if (verbose) console.log("turnOn");  
     active = true;
-    initUser();
-    chrome.browserAction.setIcon({path: "icon_19.png"});
+    chrome.storage.local.set({"active": active});
+    chrome.browserAction.setIcon({path: {
+            "19": "icon_19.png",
+            "38": "icon_38.png"
+        }
+    });    
 }
 
 function turnOff () {
-    if (verbose) console.log("background.turnOff");  
+    if (verbose) console.log("turnOff");  
     active = false;
     if (timeout != null) clearTimeout(timeout);    
-    chrome.browserAction.setIcon({path: "icon_19_disable.png"});
+    chrome.storage.local.set({"active": active});
+    chrome.browserAction.setIcon({path: {
+            "19": "icon_19_disable.png",
+            "38": "icon_38_disable.png"
+        }
+    });
 }
 
 function checkUrl () {
-    if (!active) {
-        if (auto == true) auto = false;    
-        return;
-    }
-    // console.log("background.checkUrl");  
     chrome.windows.getCurrent(function (window) {
         if (window == null || !window.focused) {
             if (verbose) console.log('(using other application)');
@@ -77,7 +89,7 @@ function checkUrl () {
                         }                        
                     } else {
                         // console.log("(same url, ignoring)");
-                        if (auto == true) auto = false;    
+                        auto = false;    
                     }
                 } else {
                     if (verbose) console.log("(no tabs, ignoring)");
@@ -88,7 +100,7 @@ function checkUrl () {
 }
 
 function postUrl () {
-    if (verbose) console.log("background.postUrl " + current_url);
+    if (verbose) console.log("postUrl " + current_url);
     if (timeout != null) clearTimeout(timeout);    
     if (current_url != 'NONE') {
         var parts = parseURL(current_url);
@@ -100,7 +112,7 @@ function postUrl () {
         var host = 'NONE';
         var page = 'NONE';
     }
-    $.post(SERVER, {action: 'report', user_id: user_id, host: host, page: page, auto: auto}, function(data) {
+    $.post(SERVER, {action: 'report', user_id: user_id, host: host, page: page, auto: auto, active: active}, function(data) {
         if (data == "NOFUTURE") {
             if (verbose) console.log("--> received NO FUTURE");
             return;
@@ -117,14 +129,14 @@ function postUrl () {
                 if (url != current_url) {
                     chrome.tabs.update(tab.id, {url: url});
                 } else {
-                    if (auto == true) auto = false;                
+                    auto = false;                
                 }
             });        
         }, delay);
     }).fail(function () {
         if (verbose) console.log("post failed");
     });
-    if (auto == true) auto = false;
+    auto = false;
 }
 
 function parseURL (url) {
@@ -165,3 +177,10 @@ chrome.windows.onRemoved.addListener(function (window_id) {
     checkUrl();
 });        
 
+chrome.browserAction.onClicked.addListener(function(tab) {
+    if (active) {
+        turnOff();
+    } else {
+        turnOn();
+    }
+});

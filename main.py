@@ -33,7 +33,11 @@ class Home(server.Handler):
         host = self.get_argument("host")
         page = self.get_argument("page")
         auto = self.get_argument("auto") == "true"
+        active = self.get_argument("active") == "true"
         model.insert_visit(user_id, host, page, auto)
+        if not active:
+            log.info("--> not active")
+            return self.text("NOFUTURE")            
         future = find_future(user_id, host)
         if future is None:
             log.info("--> no future")
