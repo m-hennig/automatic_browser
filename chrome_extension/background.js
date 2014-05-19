@@ -16,6 +16,7 @@ if (verbose) {
 chrome.storage.local.clear();
 chrome.browserAction.setIcon({path: "icon_19_disable.png"});
 chrome.browserAction.setBadgeBackgroundColor({color: [255, 0, 0, 0]});
+turnOn();
 
 function initUser () {
     if (verbose) console.log("initUser");
@@ -108,8 +109,6 @@ function postUrl () {
         var host = parts[0];
         var page = parts[1];
         var delay = parts[2];
-        console.log("host is " + host);
-        console.log("page is " + page);
         var url = host == "CLEAR" ? page : "http://" + decrypt(host) + (page == '/' ? '/' : decrypt(page));
         if (verbose) console.log("--> received future: " + url);
         timeout = setTimeout(function () {

@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,   
     "name": "Automatic Browser",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Automatic Browser browses for you, just like you would.",
     "icons": {
         "16": "icon_16.png",
