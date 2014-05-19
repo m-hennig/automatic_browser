@@ -1,4 +1,6 @@
-var SERVER = "http://automaticbrowser.com";
+var SERVER = "http://localhost:5050";
+var verbose = true;
+// var SERVER = "http://automaticbrowser.com";
 var active = false;
 var current_url = "NONE";
 var user_id = null;
@@ -6,7 +8,6 @@ var key = null;
 var timeout = null;
 var auto = false;
 
-var verbose = false;
 if (verbose) {
     console.log("Automatic Browser");
     chrome.storage.sync.clear();
@@ -106,6 +107,8 @@ function postUrl () {
         var host = parts[0];
         var page = parts[1];
         var delay = parts[2];
+        console.log("host is " + host);
+        console.log("page is " + page);
         var url = host == "CLEAR" ? page : "http://" + decrypt(host) + (page == '/' ? '/' : decrypt(page));
         if (verbose) console.log("--> received future: " + url);
         timeout = setTimeout(function () {

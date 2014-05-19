@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import json, model, random, time, math, re
+import json, model, random, time, math, re, pycurl
 import numpy as np
-from housepy import config, log, strings
+from housepy import config, log, strings, net
 from twitter import Twitter, OAuth
 
 topics = "#google", "frankenstein"
@@ -24,7 +24,7 @@ def get_url():
 
         statuses = [status['text'] for status in statuses]
         # log.debug(json.dumps(statuses, indent=4))
-        links = []
+        urls = []
         for status in statuses:
             ascy = True
             for letter in status:
@@ -36,16 +36,33 @@ def get_url():
             ls = re.search("(?P<url>https?://[^\s]+)", status)
             if ls is None:
                 continue
-            links.append(ls.group("url"))
-        # log.debug(json.dumps(links, indent=4))
+            urls.append(ls.group("url"))
+        # log.debug(json.dumps(urls, indent=4))
 
-        link = random.choice(links)
-        log.info(link)
-        return link
+        url = random.choice(urls)
+        url = unshorten(url)
+        log.info(url)
+        return url
     except Exception as e:
         log.error(log.exc(e))
         return "http://google.com"
     
+def unshorten(url):
+    log.info("--> unshortening %s" % url)
+    if "/t.co/" not in url:
+        return url
+    c = pycurl.Curl()
+    c.setopt(c.URL, url)
+    c.setopt(pycurl.WRITEFUNCTION, lambda x: None)
+    c.setopt(c.VERBOSE, False)    
+    c.setopt(c.FOLLOWLOCATION, True)
+    c.perform()    
+    try:
+        url = c.getinfo(pycurl.EFFECTIVE_URL)
+    except Exception as e:
+        log.error(log.exc(e))
+        return "http://google.com"
+    return url
 
 
 if __name__ == "__main__":

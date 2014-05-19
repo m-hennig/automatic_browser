@@ -7,7 +7,8 @@ from housepy import config, log
 MIN_DURATION = .17 * 60  # let's not make it too flippy, Stan, minimum on a site
 MAX_DURATION =  10 * 60  # you're not really spending more than this on a site ;)
 MIN_MODEL_SIZE = 5       # don't do anything until we have a decent model
-JUMP_PROB = .4           # any node in the chain includes JUMP_PROB of transitioning to a random node
+NOV_MODEL_SIZE = 20      # don't work in novelty util the model has been established
+JUMP_PROB = .15          # any node in the chain includes JUMP_PROB of transitioning to a random node
 
 class Model(object):
 
@@ -42,6 +43,7 @@ class Model(object):
             v = n
         if 'NONE' in Model.sites:
             del Model.sites['NONE']
+        log.info("Model size: %s" % len(Model.sites))
         return True
 
     @classmethod
@@ -53,7 +55,9 @@ class Model(object):
     @classmethod
     def calc_novelty(cls):
         total_visits = sum([len(site.durations) for site in cls.sites.values()])
-        return len(cls.sites) / total_visits
+        novelty = len(cls.sites) / total_visits
+        log.info("Novelty: %s" % novelty)
+        return novelty
 
     @classmethod
     def sites_exclude(cls, current):
@@ -66,28 +70,27 @@ class Model(object):
         self.pages = []        
         
     def find_next(self):
-        if random.random() > Model.calc_novelty():
+        if len(self.durations):
+            std_dev = np.std(self.durations)
+            seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
+        else:
+            seconds = 0.0
+        seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up            
 
+        if len(Model.sites) >= max(2, NOV_MODEL_SIZE) and random.random() <= Model.calc_novelty():
+            url = novelty_generator.get_url()
+            return "CLEAR", url, int(seconds * 1000)    # kinda hacky
+
+        else:
             if random.random() > JUMP_PROB:             # follow the chain
                 if not len(self.nexts):                 # new site, not enough info, choose most common site            
                     site = max(Model.sites_exclude(self), key=lambda site: len(site.durations))
                 else:
                     site = random.choice(self.nexts)    # duplicate entries mean prob distribution is correct, abusing memory space a bit, how's that gonna scale...
             else:                                       
-                site = random.choice(Model.sites_exclude(self))             # jump the chain to a random site in the model
+                site = random.choice(Model.sites_exclude(self))              # jump the chain to a random site in the model
             page = random.choice(site.pages) if len(site.pages) else '/'     # keep with deep paths if possible
-            if len(self.durations):
-                std_dev = np.std(self.durations)
-                seconds = np.mean(self.durations) + ((random.random() * std_dev) - std_dev/2)
-            else:
-                seconds = 0.0
-            seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION if seconds == 0.0 else seconds # if we dont have time info, make it up            
             return site.host, page, int(seconds * 1000)
-
-        else:
-            url = novelty_generator.get_url()
-            seconds = (random.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION
-            return "CLEAR", url, int(seconds * 1000)   # kinda hacky
 
 
     def __str__(self):
