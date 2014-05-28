@@ -1,7 +1,6 @@
 var SERVER = "http://automaticbrowser.com";
-var verbose = false;
+var verbose = true;
 // var SERVER = "http://localhost:5050";
-// var verbose = true;
 var active = false;
 var current_url = "NONE";
 var user_id = null;
@@ -148,14 +147,20 @@ function parseURL (url) {
 function encrypt (message) {
     /* deterministic encryption for server-side comparison, but key is client-side only and unique to user */
     // return message
+    console.log("Key is " + user_key);
     var encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
+    console.log("Encrypted into " + encrypted);
     var encoded = base32.encode("" + encrypted);
+    console.log("Encoded is " + encoded);
     return encoded;
 }
 
 function decrypt (encoded) {    
     // return encoded
+    console.log("Decoding " + encoded); 
     var decoded = base32.decode(encoded);    
+    console.log("Decrypting " + decoded);
+    console.log("Key is " + user_key);
     var decrypted = CryptoJS.AES.decrypt(decoded, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
     var message = decrypted.toString(CryptoJS.enc.Utf8);
     return message;

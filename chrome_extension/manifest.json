@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,   
     "name": "Automatic Browser",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Automatic Browser browses for you, just like you would.",
     "icons": {
         "16": "icon_16.png",
@@ -19,6 +19,8 @@
         "aes.js",
         "base32.js",
         "background.js",
+        "icon_19.png",
+        "icon_19_disable.png",
         "icon_38.png",
         "icon_38_disable.png"        
     ],
