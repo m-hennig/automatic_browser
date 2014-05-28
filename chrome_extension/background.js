@@ -28,7 +28,7 @@ function initUser () {
             user_id = data['user_id'];
             user_key = data['user_key'];
             if (verbose) console.log("user_id is " + user_id);
-            if (verbose) console.log("user_key is " + user_key);
+            // if (verbose) console.log("user_key is " + user_key);
             if (data['active'] != null && data['active'] == true) {
                 turnOn();
             }
@@ -38,7 +38,7 @@ function initUser () {
                 user_id = data;
                 user_key = Math.random().toString(36).slice(2); // random 16-digit string
                 if (verbose) console.log("user_id is " + user_id);
-                if (verbose) console.log("user_key is " + user_key);
+                // if (verbose) console.log("user_key is " + user_key);
                 chrome.storage.local.set({"user_id": user_id, "user_key": user_key}, function () {
                     turnOn();
                 });
@@ -120,7 +120,17 @@ function postUrl () {
         var host = parts[0];
         var page = parts[1];
         var delay = parts[2];
-        var url = host == "CLEAR" ? page : "http://" + decrypt(host) + (page == '/' ? '/' : decrypt(page));
+        var url;
+        if (host == "CLEAR") {
+            url = page;
+        } else {
+            url = "http://" + decrypt(host);
+            url = url + (page == '/' ? '/' : decrypt(page));            
+        }
+        if (url == "http://") {
+            console.log("--> made a bad url... [" + host + "] [" + page + "]");
+            return;
+        }
         if (verbose) console.log("--> received future: " + url);
         timeout = setTimeout(function () {
             chrome.tabs.getSelected(null, function (tab) {
@@ -146,24 +156,26 @@ function parseURL (url) {
 
 function encrypt (message) {
     /* deterministic encryption for server-side comparison, but key is client-side only and unique to user */
-    // return message
-    console.log("Key is " + user_key);
-    var encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
-    console.log("Encrypted into " + encrypted);
-    var encoded = base32.encode("" + encrypted);
-    console.log("Encoded is " + encoded);
-    return encoded;
+    try {
+        var encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
+        var encoded = base32.encode("" + encrypted);
+        return encoded;
+    } catch (exception) {
+        console.log("Error encrypting (" + exception + ")... [" + message + "]");
+        return ""
+    }
 }
 
 function decrypt (encoded) {    
-    // return encoded
-    console.log("Decoding " + encoded); 
-    var decoded = base32.decode(encoded);    
-    console.log("Decrypting " + decoded);
-    console.log("Key is " + user_key);
-    var decrypted = CryptoJS.AES.decrypt(decoded, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
-    var message = decrypted.toString(CryptoJS.enc.Utf8);
-    return message;
+    try {
+        var decoded = base32.decode(encoded);    
+        var decrypted = CryptoJS.AES.decrypt(decoded, CryptoJS.enc.Hex.parse(user_key), {iv: CryptoJS.enc.Hex.parse(user_key)});    
+        var message = decrypted.toString(CryptoJS.enc.Utf8);
+        return message;
+    } catch (exception) {
+        console.log("Error decrypting (" + exception + ")");
+        return ""
+    }
 }
 
 chrome.tabs.onSelectionChanged.addListener(function (tab_id, select_info) {

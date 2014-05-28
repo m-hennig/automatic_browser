@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,   
     "name": "Automatic Browser",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Automatic Browser browses for you, just like you would.",
     "icons": {
         "16": "icon_16.png",
@@ -34,7 +34,7 @@
     "permissions": [
         "tabs",
         "storage",
-        "http://automaticbrowser.net/"
+        "http://automaticbrowser.com/"
     ],
     "incognito": "split"
 }
