@@ -4,10 +4,10 @@ import json, model, random, time, math, novelty_generator
 import numpy as np
 from housepy import config, log
 
-MIN_DURATION = .17 * 60  # let's not make it too flippy, Stan, minimum on a site
+MIN_DURATION = .17 * 60  # let's not make it too flippy, minimum on a site
 MAX_DURATION =  10 * 60  # you're not really spending more than this on a site ;)
-MIN_MODEL_SIZE = 5       # don't do anything until we have a decent model
-NOV_MODEL_SIZE = 20      # don't work in novelty util the model has been established
+MIN_MODEL_SIZE = 8       # don't do anything until we have a decent model
+NOV_MODEL_SIZE = 20      # don't work in novelty util a significant model has been established
 JUMP_PROB = .15          # any node in the chain includes JUMP_PROB of transitioning to a random node
 
 class Model(object):

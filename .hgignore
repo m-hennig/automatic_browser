@@ -11,3 +11,4 @@ run/*
 dev/*
 sample_data/*
 *.pem
+note.rtf
